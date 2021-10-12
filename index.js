@@ -6,19 +6,23 @@ app.listen(port, function() {
 	console.log('server running on port 3000');
 } )
 
+let answer;
+
 app.get('/food', callName);
 function callName(req, res) {
 	var spawn = require("child_process").spawn;
 	var process = spawn('python',["./hello.py", req.query.foodname] );
 	process.stdout.on('data', function(data) {
 		res.send(data.toString());
+		answer = data.toString();
+		console.log("1st answer", answer);
 	} )
 }
 
 app.get('/details', callDetails);
 function callDetails(req,res) {
 
-var query = '3lb carrots and a chicken sandwich';
+var query = answer;
 request.get({
   url: 'https://api.calorieninjas.com/v1/nutrition?query='+query,
   headers: {
@@ -28,6 +32,8 @@ request.get({
   if(error) return console.error('Request failed:', error);
   else if(response.statusCode != 200) return console.error('Error:', response.statusCode, body.toString('utf8'));
   else res.send(body);
+
+	console.log("2st answer", answer);
 });
 }
 
